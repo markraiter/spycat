@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -30,9 +29,6 @@ import (
 // @name Authorization
 func main() {
 	cfg := config.MustLoad()
-
-	fmt.Printf("config: %+v\n", cfg)
-
 	log := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 
 	validate := validator.New()
@@ -43,6 +39,7 @@ func main() {
 
 	log.Info("Starting application...")
 	log.Info("port: " + cfg.Server.Port)
+	log.Info("database: " + cfg.Postgres.Database)
 
 	storage := postgres.New(cfg.Postgres)
 

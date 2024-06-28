@@ -8,7 +8,6 @@ import (
 )
 
 type Config struct {
-	Env string `env:"ENV" env-default:"development"`
 	Server
 	Postgres
 	Auth
@@ -20,12 +19,12 @@ type Postgres struct {
 	Port     string `env:"POSTGRES_PORT" env-default:"5432"`
 	User     string `env:"POSTGRES_USER" env-required:"true"`
 	Password string `env:"POSTGRES_PASSWORD" env-required:"true"`
-	Database string `env:"POSTGRES_DB" env-default:"blogdb"`
+	Database string `env:"POSTGRES_DB" env-default:"spycatdb"`
 	SSLMode  string `env:"POSTGRES_SSL_MODE" env-default:"disable"`
 }
 
 type Server struct {
-	Port         string        `env:"PORT" env-default:"9000"`
+	Port         string        `env:"PORT" env-default:"8000"`
 	ReadTimeout  time.Duration `env:"READ_TIMEOUT" env-default:"5s"`
 	WriteTimeout time.Duration `env:"WRITE_TIMEOUT" env-default:"5s"`
 	IdleTimeout  time.Duration `env:"IDLE_TIMEOUT" env-default:"120s"`
