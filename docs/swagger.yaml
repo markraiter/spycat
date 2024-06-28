@@ -1,0 +1,16 @@
+basePath: /api/v1
+host: localhost:8888
+info:
+  contact:
+    email: raitermark@proton.me
+    name: Mark Raiter
+  description: Docs for SpyCat API
+  title: SpyCat API
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

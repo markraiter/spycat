@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -8,6 +9,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator"
+	_ "github.com/markraiter/spycat/docs"
 	"github.com/markraiter/spycat/internal/app/api"
 	"github.com/markraiter/spycat/internal/app/api/handler"
 	"github.com/markraiter/spycat/internal/app/service"
@@ -21,13 +23,15 @@ import (
 // @description	Docs for SpyCat API
 // @contact.name Mark Raiter
 // @contact.email raitermark@proton.me
-// host localhost:8888
+// @host localhost:8888
 // @BasePath /api/v1
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
 func main() {
 	cfg := config.MustLoad()
+
+	fmt.Printf("config: %+v\n", cfg)
 
 	log := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 
