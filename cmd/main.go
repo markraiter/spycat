@@ -42,6 +42,7 @@ func main() {
 	log.Info("database: " + cfg.Postgres.Database)
 
 	storage := postgres.New(cfg.Postgres)
+	defer storage.Close()
 
 	service := service.New(
 		storage,

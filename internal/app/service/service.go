@@ -12,14 +12,22 @@ var (
 )
 
 type AuthStorage interface {
+	UserSaver
+	UserProvider
 }
 
 type Service struct {
+	AuthService
 }
 
 func New(
 	a AuthStorage,
 
 ) *Service {
-	return &Service{}
+	return &Service{
+		AuthService: AuthService{
+			saver:    a,
+			provider: a,
+		},
+	}
 }

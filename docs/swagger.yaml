@@ -1,4 +1,45 @@
 basePath: /api/v1
+definitions:
+  domain.LoginRequest:
+    properties:
+      email:
+        example: email@example.com
+        type: string
+      password:
+        example: Password12345!
+        maxLength: 50
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  domain.Response:
+    properties:
+      message:
+        example: response message
+        type: string
+    type: object
+  domain.UserRequest:
+    properties:
+      email:
+        example: email@example.com
+        type: string
+      password:
+        example: Password12345!
+        maxLength: 50
+        minLength: 8
+        type: string
+      username:
+        example: username
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
 host: localhost:8888
 info:
   contact:
@@ -7,7 +48,95 @@ info:
   description: Docs for SpyCat API
   title: SpyCat API
   version: "1.0"
-paths: {}
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Logs user in
+      operationId: login
+      parameters:
+      - description: credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: Login
+      tags:
+      - Auth
+  /auth/logout:
+    post:
+      description: Logs user out
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Logout
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register user
+      parameters:
+      - description: User data
+        in: body
+        name: Register_request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User ID
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: Register user
+      tags:
+      - Auth
 securityDefinitions:
   ApiKeyAuth:
     in: header

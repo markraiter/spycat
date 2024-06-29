@@ -8,9 +8,11 @@ import (
 )
 
 type IAuthService interface {
+	AuthService
 }
 
 type Handler struct {
+	AuthHandler
 }
 
 // New returns new instance of the Handler.
@@ -20,5 +22,12 @@ func New(
 	cfg *config.Config,
 	a IAuthService,
 ) *Handler {
-	return &Handler{}
+	return &Handler{
+		AuthHandler: AuthHandler{
+			cfg:     cfg,
+			log:     log,
+			val:     val,
+			service: a,
+		},
+	}
 }

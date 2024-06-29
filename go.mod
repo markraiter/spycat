@@ -12,6 +12,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/swag v1.16.3
+	golang.org/x/crypto v0.14.0
 )
 
 require (

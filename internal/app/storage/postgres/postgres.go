@@ -55,3 +55,7 @@ func New(cfg config.Postgres) *Storage {
 
 	return &Storage{PostgresDB: db}
 }
+
+func (s *Storage) Close() {
+	s.PostgresDB.Close()
+}
