@@ -3,8 +3,10 @@ package service
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
+	"github.com/markraiter/spycat/internal/app/storage"
 	"github.com/markraiter/spycat/internal/domain"
 )
 
@@ -15,6 +17,7 @@ type MissionSaver interface {
 
 type MissionProvider interface {
 	Missions(ctx context.Context) ([]*domain.Mission, error)
+	MissionByID(ctx context.Context, id int) (*domain.Mission, error)
 	Targets(ctx context.Context) ([]*domain.Target, error)
 }
 
@@ -103,4 +106,42 @@ func (s *MissionService) Missions(ctx context.Context) ([]*domain.Mission, error
 	}
 
 	return missions, nil
+}
+
+func (s *MissionService) MissionByID(ctx context.Context, id int) (*domain.Mission, error) {
+	const op = "service.MissionByID"
+
+	tx, err := s.processor.BeginTx(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	mission, err := s.provider.MissionByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			tx.Rollback()
+			return nil, fmt.Errorf("%s: %w", op, ErrNotFound)
+		}
+		tx.Rollback()
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	targets, err := s.provider.Targets(ctx)
+	if err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	for _, t := range targets {
+		if t.MissionID == mission.ID {
+			mission.Targets = append(mission.Targets, *t)
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return mission, nil
 }

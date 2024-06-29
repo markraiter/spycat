@@ -46,7 +46,6 @@ func (s *Storage) Cat(ctx context.Context, id int) (*domain.Cat, error) {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, fmt.Errorf("%s: %w", op, storage.ErrNotFound)
 		}
-
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 

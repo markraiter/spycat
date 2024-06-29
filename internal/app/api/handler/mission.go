@@ -15,6 +15,7 @@ import (
 type MissionService interface {
 	SaveMission(ctx context.Context, mr *domain.MissionRequest) (int, error)
 	Missions(ctx context.Context) ([]*domain.Mission, error)
+	MissionByID(ctx context.Context, id int) (*domain.Mission, error)
 }
 
 type MissionHandler struct {
@@ -80,4 +81,40 @@ func (h *MissionHandler) GetMissions(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(missions)
+}
+
+// @Summary Get mission by ID
+// @Description Get mission by ID
+// @Security ApiKeyAuth
+// @Tags Mission
+// @Accept json
+// @Produce json
+// @Param id path int true "Mission ID"
+// @Success 200 {object} domain.Mission "Mission"
+// @Failure 400 {object} domain.Response
+// @Failure 404 {object} domain.Response
+// @Failure 500 {object} domain.Response
+// @Router /missions/{id} [get]
+func (h *MissionHandler) GetMission(c *fiber.Ctx) error {
+	const op = "handler.GetMission"
+	log := h.log.With(slog.String("operation", op))
+
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		log.Warn("error while parsing input params", sl.Err(err))
+		return c.Status(fiber.StatusBadRequest).JSON(domain.Response{Message: err.Error()})
+	}
+
+	mission, err := h.service.MissionByID(c.Context(), id)
+	if err != nil {
+		if errors.Is(err, service.ErrNotFound) {
+			log.Warn("mission not found", sl.Err(err))
+			return c.Status(fiber.StatusNotFound).JSON(domain.Response{Message: err.Error()})
+		}
+
+		log.Warn("internal error", sl.Err(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(domain.Response{Message: err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(mission)
 }

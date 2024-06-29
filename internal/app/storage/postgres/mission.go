@@ -3,8 +3,10 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
+	"github.com/markraiter/spycat/internal/app/storage"
 	"github.com/markraiter/spycat/internal/domain"
 )
 
@@ -48,4 +50,22 @@ func (s *Storage) Missions(ctx context.Context) ([]*domain.Mission, error) {
 	}
 
 	return missions, nil
+}
+
+func (s *Storage) MissionByID(ctx context.Context, id int) (*domain.Mission, error) {
+	const op = "storage.MissionByID"
+
+	query := "SELECT id, cat_id, notes, completed FROM missions WHERE id = $1"
+	row := s.PostgresDB.QueryRowContext(ctx, query, id)
+
+	m := &domain.Mission{}
+	err := row.Scan(&m.ID, &m.CatID, &m.Notes, &m.Completed)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, fmt.Errorf("%s: %w", op, storage.ErrNotFound)
+		}
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return m, nil
 }
