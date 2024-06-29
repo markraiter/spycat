@@ -2,13 +2,12 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
 
 	"github.com/markraiter/spycat/internal/app/storage"
 	"github.com/markraiter/spycat/internal/domain"
+	"github.com/markraiter/spycat/internal/lib/breed"
 )
 
 type CatSaver interface {
@@ -41,7 +40,7 @@ func (s *CatService) SaveCat(ctx context.Context, cr *domain.CatRequest) (int, e
 		Salary:            cr.Salary,
 	}
 
-	if !validateCatBreed(cat.Breed) {
+	if !breed.ValidateCatBreed(cat.Breed) {
 		return 0, fmt.Errorf("%s: %w", op, ErrCatBreedNotFound)
 	}
 
@@ -93,7 +92,7 @@ func (s *CatService) UpdateCat(ctx context.Context, catID int, cr *domain.CatReq
 		Salary:            cr.Salary,
 	}
 
-	if !validateCatBreed(cat.Breed) {
+	if !breed.ValidateCatBreed(cat.Breed) {
 		return fmt.Errorf("%s: %w", op, ErrCatBreedNotFound)
 	}
 
@@ -118,27 +117,4 @@ func (s *CatService) DeleteCat(ctx context.Context, id int) error {
 	}
 
 	return nil
-}
-
-func validateCatBreed(breed string) bool {
-	resp, err := http.Get("https://api.thecatapi.com/v1/breeds")
-	if err != nil {
-		return false
-	}
-	defer resp.Body.Close()
-
-	var breeds []struct {
-		Name string `json:"name"`
-	}
-
-	if err := json.NewDecoder(resp.Body).Decode(&breeds); err != nil {
-		return false
-	}
-
-	for _, b := range breeds {
-		if b.Name == breed {
-			return true
-		}
-	}
-	return false
 }
