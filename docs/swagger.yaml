@@ -477,6 +477,40 @@ paths:
       tags:
       - Mission
   /missions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete mission
+      parameters:
+      - description: Mission ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete mission
+      tags:
+      - Mission
     get:
       consumes:
       - application/json
@@ -589,6 +623,89 @@ paths:
       summary: Assign mission to cat
       tags:
       - Mission
+  /missions/{mission_id}/targets/{target_id}:
+    patch:
+      consumes:
+      - application/json
+      description: Add target to mission
+      parameters:
+      - description: Mission ID
+        in: path
+        name: mission_id
+        required: true
+        type: integer
+      - description: Target ID
+        in: path
+        name: target_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Add target to mission
+      tags:
+      - Target
+  /targets/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Complete target
+      parameters:
+      - description: Target ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Complete target
+      tags:
+      - Target
 securityDefinitions:
   ApiKeyAuth:
     in: header

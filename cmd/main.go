@@ -48,6 +48,7 @@ func main() {
 		storage,
 		storage,
 		storage,
+		storage,
 	)
 
 	handler := handler.New(

@@ -11,12 +11,14 @@ type IService interface {
 	AuthService
 	CatService
 	MissionService
+	TargetService
 }
 
 type Handler struct {
 	AuthHandler
 	CatHandler
 	MissionHandler
+	TargetHandler
 }
 
 // New returns new instance of the Handler.
@@ -39,6 +41,11 @@ func New(
 			service: i,
 		},
 		MissionHandler: MissionHandler{
+			log:     log,
+			val:     val,
+			service: i,
+		},
+		TargetHandler: TargetHandler{
 			log:     log,
 			val:     val,
 			service: i,

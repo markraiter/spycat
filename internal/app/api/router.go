@@ -40,6 +40,13 @@ func (s Server) initRoutes(app *fiber.App, handler *handler.Handler, cfg *config
 			missions.Get("/:id", basicAuth, timeout.NewWithContext(handler.GetMission, cfg.Server.ReadTimeout))
 			missions.Patch("/:mission_id/cats/:cat_id", basicAuth, timeout.NewWithContext(handler.AssignMissionToCat, cfg.Server.WriteTimeout))
 			missions.Patch("/:id", basicAuth, timeout.NewWithContext(handler.CompleteMission, cfg.Server.WriteTimeout))
+			missions.Delete("/:id", basicAuth, timeout.NewWithContext(handler.DeleteMission, cfg.Server.WriteTimeout))
+			missions.Patch("/:mission_id/targets/:target_id", basicAuth, timeout.NewWithContext(handler.AddTargetToMission, cfg.Server.WriteTimeout))
+		}
+
+		targets := api.Group("/targets")
+		{
+			targets.Patch("/:id", basicAuth, timeout.NewWithContext(handler.CompleteTarget, cfg.Server.WriteTimeout))
 		}
 
 	}
