@@ -14,7 +14,6 @@ type Storage struct {
 }
 
 func New(cfg config.Postgres) *Storage {
-	// Підключення до бази даних postgres для створення нової бази даних
 	initialEntryString := fmt.Sprintf("host=%s port=%s user=%s dbname=postgres password=%s sslmode=%s",
 		cfg.Host,
 		cfg.Port,
@@ -34,7 +33,6 @@ func New(cfg config.Postgres) *Storage {
 		panic(err)
 	}
 
-	// Підключення до новоствореної бази даних
 	entryString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		cfg.Host,
 		cfg.Port,
