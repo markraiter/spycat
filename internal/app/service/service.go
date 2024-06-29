@@ -31,6 +31,7 @@ type MissionStorage interface {
 }
 
 type TargetStorage interface {
+	TargetSaver
 	TargetProcessor
 }
 
@@ -64,6 +65,7 @@ func New(
 			processor: m,
 		},
 		TargetService: TargetService{
+			saver:     t,
 			processor: t,
 		},
 	}

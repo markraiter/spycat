@@ -2,11 +2,17 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 
 	"github.com/markraiter/spycat/internal/app/storage"
+	"github.com/markraiter/spycat/internal/domain"
 )
+
+type TargetSaver interface {
+	SaveTarget(ctx context.Context, tx *sql.Tx, target *domain.Target) error
+}
 
 type TargetProcessor interface {
 	TargetCompleted(ctx context.Context, id int) error
@@ -14,6 +20,7 @@ type TargetProcessor interface {
 }
 
 type TargetService struct {
+	saver     TargetSaver
 	processor TargetProcessor
 }
 
