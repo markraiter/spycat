@@ -23,24 +23,6 @@ tasks:
     cmds:
       - migrate -database "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SSL_MODE}" -path internal/app/storage/postgres/migrations/ down
 
-  test:
-    aliases:
-      - t
-    cmds:
-      - go test ./...
-
-  coverge:
-    aliases:
-      - c
-    cmds:
-      - go test -coverprofile=coverage.out ./...
-      - go tool cover -html=coverage.out -o coverage.html
-      - xdg-open coverage.html 
-
-  rmcov:
-    cmds:
-      - rm coverage.out coverage.html
-
   swaginit:
     aliases:
       - sw
