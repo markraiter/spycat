@@ -429,6 +429,41 @@ const docTemplate = `{
             }
         },
         "/missions": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get missions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mission"
+                ],
+                "summary": "Get missions",
+                "responses": {
+                    "200": {
+                        "description": "Missions",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Mission"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -565,11 +600,40 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.Mission": {
+            "type": "object",
+            "required": [
+                "cat_id",
+                "targets"
+            ],
+            "properties": {
+                "cat_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "completed": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "notes": {
+                    "type": "string",
+                    "example": "Lorem ipsum"
+                },
+                "targets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Target"
+                    }
+                }
+            }
+        },
         "domain.MissionRequest": {
             "type": "object",
             "required": [
                 "cat_id",
-                "completed",
                 "targets"
             ],
             "properties": {
@@ -605,7 +669,6 @@ const docTemplate = `{
         "domain.Target": {
             "type": "object",
             "required": [
-                "completed",
                 "country",
                 "mission_id",
                 "name"

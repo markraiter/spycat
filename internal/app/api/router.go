@@ -36,6 +36,7 @@ func (s Server) initRoutes(app *fiber.App, handler *handler.Handler, cfg *config
 		missions := api.Group("/missions")
 		{
 			missions.Post("/", basicAuth, timeout.NewWithContext(handler.CreateMission, cfg.Server.WriteTimeout))
+			missions.Get("/", basicAuth, timeout.NewWithContext(handler.GetMissions, cfg.Server.ReadTimeout))
 		}
 
 	}

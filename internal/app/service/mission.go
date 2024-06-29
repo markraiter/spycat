@@ -13,12 +13,18 @@ type MissionSaver interface {
 	SaveTarget(ctx context.Context, tx *sql.Tx, target *domain.Target) error
 }
 
+type MissionProvider interface {
+	Missions(ctx context.Context) ([]*domain.Mission, error)
+	Targets(ctx context.Context) ([]*domain.Target, error)
+}
+
 type MissionProcessor interface {
 	BeginTx(ctx context.Context) (*sql.Tx, error)
 }
 
 type MissionService struct {
 	saver     MissionSaver
+	provider  MissionProvider
 	processor MissionProcessor
 }
 
@@ -61,4 +67,40 @@ func (s *MissionService) SaveMission(ctx context.Context, mr *domain.MissionRequ
 	}
 
 	return missionID, nil
+}
+
+func (s *MissionService) Missions(ctx context.Context) ([]*domain.Mission, error) {
+	const op = "service.Missions"
+
+	tx, err := s.processor.BeginTx(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	missions, err := s.provider.Missions(ctx)
+	if err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	targets, err := s.provider.Targets(ctx)
+	if err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	for _, m := range missions {
+		for _, t := range targets {
+			if t.MissionID == m.ID {
+				m.Targets = append(m.Targets, *t)
+			}
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return missions, nil
 }

@@ -25,6 +25,7 @@ type CatStorage interface {
 
 type MissionStorage interface {
 	MissionSaver
+	MissionProvider
 	MissionProcessor
 }
 
@@ -52,6 +53,7 @@ func New(
 		},
 		MissionService: MissionService{
 			saver:     m,
+			provider:  m,
 			processor: m,
 		},
 	}

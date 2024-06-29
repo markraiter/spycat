@@ -14,6 +14,7 @@ import (
 
 type MissionService interface {
 	SaveMission(ctx context.Context, mr *domain.MissionRequest) (int, error)
+	Missions(ctx context.Context) ([]*domain.Mission, error)
 }
 
 type MissionHandler struct {
@@ -57,4 +58,26 @@ func (h *MissionHandler) CreateMission(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(id)
+}
+
+// @Summary Get missions
+// @Description Get missions
+// @Security ApiKeyAuth
+// @Tags Mission
+// @Accept json
+// @Produce json
+// @Success 200 {array} domain.Mission "Missions"
+// @Failure 500 {object} domain.Response
+// @Router /missions [get]
+func (h *MissionHandler) GetMissions(c *fiber.Ctx) error {
+	const op = "handler.GetMissions"
+	log := h.log.With(slog.String("operation", op))
+
+	missions, err := h.service.Missions(c.Context())
+	if err != nil {
+		log.Warn("internal error", sl.Err(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(domain.Response{Message: err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(missions)
 }

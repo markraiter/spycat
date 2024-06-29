@@ -52,6 +52,27 @@ definitions:
     - email
     - password
     type: object
+  domain.Mission:
+    properties:
+      cat_id:
+        example: 1
+        type: integer
+      completed:
+        example: false
+        type: boolean
+      id:
+        type: integer
+      notes:
+        example: Lorem ipsum
+        type: string
+      targets:
+        items:
+          $ref: '#/definitions/domain.Target'
+        type: array
+    required:
+    - cat_id
+    - targets
+    type: object
   domain.MissionRequest:
     properties:
       cat_id:
@@ -69,7 +90,6 @@ definitions:
         type: array
     required:
     - cat_id
-    - completed
     - targets
     type: object
   domain.Response:
@@ -98,7 +118,6 @@ definitions:
         example: Lorem ipsum
         type: string
     required:
-    - completed
     - country
     - mission_id
     - name
@@ -396,6 +415,28 @@ paths:
       tags:
       - Cat
   /missions:
+    get:
+      consumes:
+      - application/json
+      description: Get missions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Missions
+          schema:
+            items:
+              $ref: '#/definitions/domain.Mission'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get missions
+      tags:
+      - Mission
     post:
       consumes:
       - application/json
