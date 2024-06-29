@@ -8,6 +8,7 @@ var (
 	ErrAlreadyExists      = errors.New("already exists")
 	ErrNotFound           = errors.New("not found")
 	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrCatBreedNotFound   = errors.New("cat breed not found")
 )
 
 type AuthStorage interface {

@@ -1,5 +1,43 @@
 basePath: /api/v1
 definitions:
+  domain.Cat:
+    properties:
+      breed:
+        example: Siamese
+        type: string
+      id:
+        type: integer
+      name:
+        example: Tom
+        type: string
+      salary:
+        example: 1000
+        type: integer
+      years_of_experience:
+        example: 5
+        type: integer
+    required:
+    - breed
+    - name
+    type: object
+  domain.CatRequest:
+    properties:
+      breed:
+        example: Siamese
+        type: string
+      name:
+        example: Tom
+        type: string
+      salary:
+        example: 1000
+        type: integer
+      years_of_experience:
+        example: 5
+        type: integer
+    required:
+    - breed
+    - name
+    type: object
   domain.LoginRequest:
     properties:
       email:
@@ -137,6 +175,181 @@ paths:
       summary: Register user
       tags:
       - Auth
+  /cats:
+    get:
+      consumes:
+      - application/json
+      description: Get all cats
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Cat'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get all cats
+      tags:
+      - Cat
+    post:
+      consumes:
+      - application/json
+      description: Create cat
+      parameters:
+      - description: Cat data
+        in: body
+        name: Create_cat_request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CatRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Cat ID
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Create cat
+      tags:
+      - Cat
+  /cats/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete cat by ID
+      parameters:
+      - description: Cat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete cat by ID
+      tags:
+      - Cat
+    get:
+      consumes:
+      - application/json
+      description: Get cat by ID
+      parameters:
+      - description: Cat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Cat'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get cat by ID
+      tags:
+      - Cat
+    put:
+      consumes:
+      - application/json
+      description: Update cat by ID
+      parameters:
+      - description: Cat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Cat data
+        in: body
+        name: Update_cat_request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Update cat by ID
+      tags:
+      - Cat
 securityDefinitions:
   ApiKeyAuth:
     in: header

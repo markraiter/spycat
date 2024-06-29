@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/markraiter/spycat/internal/app/storage"
 	"github.com/markraiter/spycat/internal/domain"
@@ -39,8 +41,16 @@ func (s *CatService) SaveCat(ctx context.Context, cr *domain.CatRequest) (int, e
 		Salary:            cr.Salary,
 	}
 
+	if !validateCatBreed(cat.Breed) {
+		return 0, fmt.Errorf("%s: %w", op, ErrCatBreedNotFound)
+	}
+
 	id, err := s.saver.SaveCat(ctx, cat)
 	if err != nil {
+		if errors.Is(err, storage.ErrAlreadyExists) {
+			return 0, fmt.Errorf("%s: %w", op, ErrAlreadyExists)
+		}
+
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -83,6 +93,10 @@ func (s *CatService) UpdateCat(ctx context.Context, catID int, cr *domain.CatReq
 		Salary:            cr.Salary,
 	}
 
+	if !validateCatBreed(cat.Breed) {
+		return fmt.Errorf("%s: %w", op, ErrCatBreedNotFound)
+	}
+
 	if err := s.processor.UpdateCat(ctx, cat); err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			return fmt.Errorf("%s: %w", op, ErrNotFound)
@@ -104,4 +118,27 @@ func (s *CatService) DeleteCat(ctx context.Context, id int) error {
 	}
 
 	return nil
+}
+
+func validateCatBreed(breed string) bool {
+	resp, err := http.Get("https://api.thecatapi.com/v1/breeds")
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+
+	var breeds []struct {
+		Name string `json:"name"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&breeds); err != nil {
+		return false
+	}
+
+	for _, b := range breeds {
+		if b.Name == breed {
+			return true
+		}
+	}
+	return false
 }

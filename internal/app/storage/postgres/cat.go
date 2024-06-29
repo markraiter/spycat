@@ -85,9 +85,18 @@ func (s *Storage) UpdateCat(ctx context.Context, cat *domain.Cat) error {
 	const op = "storage.UpdateCat"
 
 	query := "UPDATE cats SET name = $1, breed = $2, years_of_experience = $3, salary = $4 WHERE id = $5"
-	_, err := s.PostgresDB.Exec(query, cat.Name, cat.Breed, cat.YearsOfExperience, cat.Salary, cat.ID)
+	result, err := s.PostgresDB.Exec(query, cat.Name, cat.Breed, cat.YearsOfExperience, cat.Salary, cat.ID)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("%s: %w", op, storage.ErrNotFound)
 	}
 
 	return nil
@@ -97,9 +106,18 @@ func (s *Storage) DeleteCat(ctx context.Context, id int) error {
 	const op = "storage.DeleteCat"
 
 	query := "DELETE FROM cats WHERE id = $1"
-	_, err := s.PostgresDB.Exec(query, id)
+	result, err := s.PostgresDB.Exec(query, id)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("%s: %w", op, storage.ErrNotFound)
 	}
 
 	return nil

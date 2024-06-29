@@ -7,12 +7,14 @@ import (
 	"github.com/markraiter/spycat/internal/config"
 )
 
-type IAuthService interface {
+type IService interface {
 	AuthService
+	CatService
 }
 
 type Handler struct {
 	AuthHandler
+	CatHandler
 }
 
 // New returns new instance of the Handler.
@@ -20,14 +22,19 @@ func New(
 	log *slog.Logger,
 	val *validator.Validate,
 	cfg *config.Config,
-	a IAuthService,
+	i IService,
 ) *Handler {
 	return &Handler{
 		AuthHandler: AuthHandler{
 			cfg:     cfg,
 			log:     log,
 			val:     val,
-			service: a,
+			service: i,
+		},
+		CatHandler: CatHandler{
+			log:     log,
+			val:     val,
+			service: i,
 		},
 	}
 }

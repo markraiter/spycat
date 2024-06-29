@@ -24,5 +24,14 @@ func (s Server) initRoutes(app *fiber.App, handler *handler.Handler, cfg *config
 			authentication.Post("/logout", basicAuth, timeout.NewWithContext(handler.Logout, cfg.Server.WriteTimeout))
 		}
 
+		cats := api.Group("/cats")
+		{
+			cats.Post("/", basicAuth, timeout.NewWithContext(handler.CreateCat, cfg.Server.WriteTimeout))
+			cats.Get("/", basicAuth, timeout.NewWithContext(handler.GetCats, cfg.Server.ReadTimeout))
+			cats.Get("/:id", basicAuth, timeout.NewWithContext(handler.GetCat, cfg.Server.ReadTimeout))
+			cats.Put("/:id", basicAuth, timeout.NewWithContext(handler.UpdateCat, cfg.Server.WriteTimeout))
+			cats.Delete("/:id", basicAuth, timeout.NewWithContext(handler.DeleteCat, cfg.Server.WriteTimeout))
+		}
+
 	}
 }
