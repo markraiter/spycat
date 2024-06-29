@@ -8,7 +8,6 @@ var (
 	ErrAlreadyExists      = errors.New("already exists")
 	ErrNotFound           = errors.New("not found")
 	ErrInvalidCredentials = errors.New("invalid credentials")
-	ErrNotAllowed         = errors.New("user is not allowed to perform this operation")
 )
 
 type AuthStorage interface {
@@ -16,18 +15,31 @@ type AuthStorage interface {
 	UserProvider
 }
 
+type CatStorage interface {
+	CatSaver
+	CatProvider
+	CatProcessor
+}
+
 type Service struct {
 	AuthService
+	CatService
 }
 
 func New(
 	a AuthStorage,
+	c CatStorage,
 
 ) *Service {
 	return &Service{
 		AuthService: AuthService{
 			saver:    a,
 			provider: a,
+		},
+		CatService: CatService{
+			saver:     c,
+			provider:  c,
+			processor: c,
 		},
 	}
 }
