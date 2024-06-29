@@ -142,7 +142,7 @@ definitions:
     - password
     - username
     type: object
-host: localhost:8888
+host: localhost:8000
 info:
   contact:
     email: raitermark@proton.me

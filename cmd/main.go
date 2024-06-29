@@ -22,7 +22,7 @@ import (
 // @description	Docs for SpyCat API
 // @contact.name Mark Raiter
 // @contact.email raitermark@proton.me
-// @host localhost:8888
+// @host localhost:8000
 // @BasePath /api/v1
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
