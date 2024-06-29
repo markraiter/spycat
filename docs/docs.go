@@ -427,6 +427,69 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/missions": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create mission",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mission"
+                ],
+                "summary": "Create mission",
+                "parameters": [
+                    {
+                        "description": "Mission data",
+                        "name": "Create_mission_request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.MissionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Mission ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -502,12 +565,74 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.MissionRequest": {
+            "type": "object",
+            "required": [
+                "cat_id",
+                "completed",
+                "targets"
+            ],
+            "properties": {
+                "cat_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "completed": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "notes": {
+                    "type": "string",
+                    "example": "Lorem ipsum"
+                },
+                "targets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Target"
+                    }
+                }
+            }
+        },
         "domain.Response": {
             "type": "object",
             "properties": {
                 "message": {
                     "type": "string",
                     "example": "response message"
+                }
+            }
+        },
+        "domain.Target": {
+            "type": "object",
+            "required": [
+                "completed",
+                "country",
+                "mission_id",
+                "name"
+            ],
+            "properties": {
+                "completed": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "country": {
+                    "type": "string",
+                    "example": "USA"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mission_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "notes": {
+                    "type": "string",
+                    "example": "Lorem ipsum"
                 }
             }
         },

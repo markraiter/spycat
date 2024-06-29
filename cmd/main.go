@@ -47,6 +47,7 @@ func main() {
 	service := service.New(
 		storage,
 		storage,
+		storage,
 	)
 
 	handler := handler.New(

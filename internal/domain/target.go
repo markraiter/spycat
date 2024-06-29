@@ -6,5 +6,5 @@ type Target struct {
 	Name      string `json:"name" validate:"required" example:"John Doe"`
 	Country   string `json:"country" validate:"required" example:"USA"`
 	Notes     string `json:"notes" validate:"omitempty" example:"Lorem ipsum"`
-	Completed bool   `json:"completed" validate:"required" example:"false"`
+	Completed bool   `json:"completed" validate:"omitepmty" example:"false"`
 }

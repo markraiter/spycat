@@ -10,11 +10,13 @@ import (
 type IService interface {
 	AuthService
 	CatService
+	MissionService
 }
 
 type Handler struct {
 	AuthHandler
 	CatHandler
+	MissionHandler
 }
 
 // New returns new instance of the Handler.
@@ -32,6 +34,11 @@ func New(
 			service: i,
 		},
 		CatHandler: CatHandler{
+			log:     log,
+			val:     val,
+			service: i,
+		},
+		MissionHandler: MissionHandler{
 			log:     log,
 			val:     val,
 			service: i,

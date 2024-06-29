@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -54,6 +55,14 @@ func New(cfg config.Postgres) *Storage {
 	}
 
 	return &Storage{PostgresDB: db}
+}
+
+func (s *Storage) BeginTx(ctx context.Context) (*sql.Tx, error) {
+	tx, err := s.PostgresDB.BeginTx(ctx, &sql.TxOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return tx, nil
 }
 
 func (s *Storage) Close() {

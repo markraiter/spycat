@@ -33,5 +33,10 @@ func (s Server) initRoutes(app *fiber.App, handler *handler.Handler, cfg *config
 			cats.Delete("/:id", basicAuth, timeout.NewWithContext(handler.DeleteCat, cfg.Server.WriteTimeout))
 		}
 
+		missions := api.Group("/missions")
+		{
+			missions.Post("/", basicAuth, timeout.NewWithContext(handler.CreateMission, cfg.Server.WriteTimeout))
+		}
+
 	}
 }

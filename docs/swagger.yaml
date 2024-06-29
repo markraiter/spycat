@@ -52,11 +52,56 @@ definitions:
     - email
     - password
     type: object
+  domain.MissionRequest:
+    properties:
+      cat_id:
+        example: 1
+        type: integer
+      completed:
+        example: false
+        type: boolean
+      notes:
+        example: Lorem ipsum
+        type: string
+      targets:
+        items:
+          $ref: '#/definitions/domain.Target'
+        type: array
+    required:
+    - cat_id
+    - completed
+    - targets
+    type: object
   domain.Response:
     properties:
       message:
         example: response message
         type: string
+    type: object
+  domain.Target:
+    properties:
+      completed:
+        example: false
+        type: boolean
+      country:
+        example: USA
+        type: string
+      id:
+        type: integer
+      mission_id:
+        example: 1
+        type: integer
+      name:
+        example: John Doe
+        type: string
+      notes:
+        example: Lorem ipsum
+        type: string
+    required:
+    - completed
+    - country
+    - mission_id
+    - name
     type: object
   domain.UserRequest:
     properties:
@@ -350,6 +395,46 @@ paths:
       summary: Update cat by ID
       tags:
       - Cat
+  /missions:
+    post:
+      consumes:
+      - application/json
+      description: Create mission
+      parameters:
+      - description: Mission data
+        in: body
+        name: Create_mission_request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.MissionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Mission ID
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Create mission
+      tags:
+      - Mission
 securityDefinitions:
   ApiKeyAuth:
     in: header

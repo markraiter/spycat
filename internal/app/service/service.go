@@ -9,6 +9,7 @@ var (
 	ErrNotFound           = errors.New("not found")
 	ErrInvalidCredentials = errors.New("invalid credentials")
 	ErrCatBreedNotFound   = errors.New("cat breed not found")
+	ErrTooManyTargets     = errors.New("too many targets")
 )
 
 type AuthStorage interface {
@@ -22,14 +23,21 @@ type CatStorage interface {
 	CatProcessor
 }
 
+type MissionStorage interface {
+	MissionSaver
+	MissionProcessor
+}
+
 type Service struct {
 	AuthService
 	CatService
+	MissionService
 }
 
 func New(
 	a AuthStorage,
 	c CatStorage,
+	m MissionStorage,
 
 ) *Service {
 	return &Service{
@@ -41,6 +49,10 @@ func New(
 			saver:     c,
 			provider:  c,
 			processor: c,
+		},
+		MissionService: MissionService{
+			saver:     m,
+			processor: m,
 		},
 	}
 }

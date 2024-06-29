@@ -1,4 +1,4 @@
-CREATE TABLE missions (
+CREATE TABLE IF NOT EXISTS missions (
     id                   SERIAL PRIMARY KEY,
     cat_id               INT REFERENCES cats(id) ON DELETE CASCADE,
     notes                TEXT,
