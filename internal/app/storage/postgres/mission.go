@@ -112,3 +112,36 @@ func (s *Storage) AssignMissionToCat(ctx context.Context, catID, missionID int) 
 
 	return nil
 }
+
+func (s *Storage) CompleteMission(ctx context.Context, id int) error {
+	const op = "storage.CompleteMission"
+
+	tx, err := s.PostgresDB.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	_, err = s.MissionByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			tx.Rollback()
+			return fmt.Errorf("%s: %w", op, storage.ErrNotFound)
+		}
+		tx.Rollback()
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	query := "UPDATE missions SET completed = true WHERE id = $1"
+	_, err = tx.ExecContext(ctx, query, id)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}

@@ -18,6 +18,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER set_missions_updated_at_trigger
-BEFORE UPDATE ON cats
+BEFORE UPDATE ON missions
 FOR EACH ROW
 EXECUTE FUNCTION set_missions_updated_at();

@@ -24,6 +24,7 @@ type MissionProvider interface {
 type MissionProcessor interface {
 	BeginTx(ctx context.Context) (*sql.Tx, error)
 	AssignMissionToCat(ctx context.Context, catID, missionID int) error
+	CompleteMission(ctx context.Context, id int) error
 }
 
 type MissionService struct {
@@ -151,6 +152,20 @@ func (s *MissionService) AssignMissionToCat(ctx context.Context, catID, missionI
 	const op = "service.AssignMissionToCat"
 
 	err := s.processor.AssignMissionToCat(ctx, catID, missionID)
+	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			return fmt.Errorf("%s: %w", op, ErrNotFound)
+		}
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
+
+func (s *MissionService) CompleteMission(ctx context.Context, id int) error {
+	const op = "service.CompleteMission"
+
+	err := s.processor.CompleteMission(ctx, id)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			return fmt.Errorf("%s: %w", op, ErrNotFound)

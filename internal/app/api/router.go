@@ -39,6 +39,7 @@ func (s Server) initRoutes(app *fiber.App, handler *handler.Handler, cfg *config
 			missions.Get("/", basicAuth, timeout.NewWithContext(handler.GetMissions, cfg.Server.ReadTimeout))
 			missions.Get("/:id", basicAuth, timeout.NewWithContext(handler.GetMission, cfg.Server.ReadTimeout))
 			missions.Patch("/:mission_id/cats/:cat_id", basicAuth, timeout.NewWithContext(handler.AssignMissionToCat, cfg.Server.WriteTimeout))
+			missions.Patch("/:id", basicAuth, timeout.NewWithContext(handler.CompleteMission, cfg.Server.WriteTimeout))
 		}
 
 	}

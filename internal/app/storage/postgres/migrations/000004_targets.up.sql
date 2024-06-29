@@ -20,6 +20,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER set_targets_updated_at_trigger
-BEFORE UPDATE ON cats
+BEFORE UPDATE ON targets
 FOR EACH ROW
 EXECUTE FUNCTION set_targets_updated_at();

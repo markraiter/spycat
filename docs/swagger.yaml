@@ -511,6 +511,40 @@ paths:
       summary: Get mission by ID
       tags:
       - Mission
+    patch:
+      consumes:
+      - application/json
+      description: Complete mission
+      parameters:
+      - description: Mission ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Complete mission
+      tags:
+      - Mission
   /missions/{mission_id}/cats/{cat_id}:
     patch:
       consumes:
