@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 
 	"github.com/go-playground/validator"
@@ -16,6 +17,7 @@ type MissionService interface {
 	SaveMission(ctx context.Context, mr *domain.MissionRequest) (int, error)
 	Missions(ctx context.Context) ([]*domain.Mission, error)
 	MissionByID(ctx context.Context, id int) (*domain.Mission, error)
+	AssignMissionToCat(ctx context.Context, catID, missionID int) error
 }
 
 type MissionHandler struct {
@@ -117,4 +119,48 @@ func (h *MissionHandler) GetMission(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(mission)
+}
+
+// @Summary Assign mission to cat
+// @Description Assign mission to cat
+// @Security ApiKeyAuth
+// @Tags Mission
+// @Accept json
+// @Produce json
+// @Param cat_id path int true "Cat ID"
+// @Param mission_id path int true "Mission ID"
+// @Success 200 {object} domain.Response
+// @Failure 400 {object} domain.Response
+// @Failure 403 {object} domain.Response
+// @Failure 404 {object} domain.Response
+// @Failure 500 {object} domain.Response
+// @Router /missions/{mission_id}/cats/{cat_id} [patch]
+func (h *MissionHandler) AssignMissionToCat(c *fiber.Ctx) error {
+	const op = "handler.AssignMissionToCat"
+	log := h.log.With(slog.String("operation", op))
+
+	catID, err := c.ParamsInt("cat_id")
+	if err != nil {
+		log.Warn("error while parsing input params", sl.Err(err))
+		return c.Status(fiber.StatusBadRequest).JSON(domain.Response{Message: err.Error()})
+	}
+
+	missionID, err := c.ParamsInt("mission_id")
+	if err != nil {
+		log.Warn("error while parsing input params", sl.Err(err))
+		return c.Status(fiber.StatusBadRequest).JSON(domain.Response{Message: err.Error()})
+	}
+
+	err = h.service.AssignMissionToCat(c.Context(), catID, missionID)
+	if err != nil {
+		if errors.Is(err, service.ErrNotFound) {
+			log.Warn("mission or cat not found", sl.Err(err))
+			return c.Status(fiber.StatusNotFound).JSON(domain.Response{Message: err.Error()})
+		}
+
+		log.Warn("internal error", sl.Err(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(domain.Response{Message: err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(domain.Response{Message: fmt.Sprintf("mission assigned to cat: %d", catID)})
 }

@@ -511,6 +511,50 @@ paths:
       summary: Get mission by ID
       tags:
       - Mission
+  /missions/{mission_id}/cats/{cat_id}:
+    patch:
+      consumes:
+      - application/json
+      description: Assign mission to cat
+      parameters:
+      - description: Cat ID
+        in: path
+        name: cat_id
+        required: true
+        type: integer
+      - description: Mission ID
+        in: path
+        name: mission_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Assign mission to cat
+      tags:
+      - Mission
 securityDefinitions:
   ApiKeyAuth:
     in: header

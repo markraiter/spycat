@@ -69,3 +69,46 @@ func (s *Storage) MissionByID(ctx context.Context, id int) (*domain.Mission, err
 
 	return m, nil
 }
+
+func (s *Storage) AssignMissionToCat(ctx context.Context, catID, missionID int) error {
+	const op = "storage.AssignMissionToCat"
+
+	tx, err := s.PostgresDB.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	_, err = s.Cat(ctx, catID)
+	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			tx.Rollback()
+			return fmt.Errorf("%s: %w", op, storage.ErrNotFound)
+		}
+		tx.Rollback()
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	_, err = s.MissionByID(ctx, missionID)
+	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			tx.Rollback()
+			return fmt.Errorf("%s: %w", op, storage.ErrNotFound)
+		}
+		tx.Rollback()
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	query := "UPDATE missions SET cat_id = $1 WHERE id = $2"
+	_, err = tx.ExecContext(ctx, query, catID, missionID)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
