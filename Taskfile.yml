@@ -28,3 +28,15 @@ tasks:
       - sw
     cmds:
       - swag init --outputTypes go,yaml -g cmd/main.go internal/domain
+
+  dockerup:
+    aliases:
+      - du
+    cmds:
+      - docker-compose up -d
+
+  dockerdown:
+    aliases:
+      - dd
+    cmds:
+      - docker-compose down

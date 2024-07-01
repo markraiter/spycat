@@ -22,6 +22,9 @@ To install and run this project, follow these steps:
 
 **ATTENTION!!!** By default the app will run on port `localhost:8000`, or in any other you provide in your `.env` file.
 
+_Also you can run the app in [Docker](https://docker.com) container with `task dockerup` and stop it with `task dockerdown`._
+
+
 ### Built With
 
 - [Go](https://golang.org/) - The programming language used.
@@ -31,3 +34,4 @@ To install and run this project, follow these steps:
 - [Postgres](https://www.postgresql.org/) - Database used.
 - [Golang-Migrate](https://github.com/golang-migrate/migrate) - Database migrations tool.
 - [JWT](https://jwt.io/) - Used for authentication.
+- [Docker](https://docker.com) - Used for conterization.
